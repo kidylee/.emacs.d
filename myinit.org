@@ -1,9 +1,10 @@
-
 * UI
   
   #+BEGIN_SRC emacs-lisp
     (setq inhibit-startup-message t)
-
+    (global-hl-line-mode t)
+    (fset 'yes-or-no-p 'y-or-n-p)
+    (global-set-key (kbd "<f5>") 'revert-buffer)
 
     (scroll-bar-mode -1)        ; Disable visible scrollbar
     (tool-bar-mode -1)          ; Disable the toolbar
@@ -40,7 +41,6 @@
     (use-package try)
   #+END_SRC
 
-
 * which-key
   #+BEGIN_SRC emacs-lisp
     (use-package which-key
@@ -71,11 +71,15 @@
   #+BEGIN_SRC emacs-lisp
 
     (use-package counsel
-      :bind (("C-M-j" . 'counsel-switch-buffer)
+      :bind (("M-y" . counsel-yank-pop)
+	     ("C-M-j" . 'counsel-switch-buffer)
 	     :map minibuffer-local-map
-	     ("C-r" . 'counsel-minibuffer-history))
+	     ("C-r" . 'counsel-minibuffer-history)
+	     :map ivy-minibuffer-map
+	     ("M-y" . ivy-next-line))
       :config
       (counsel-mode 1))
+
     (use-package ivy
       :diminish
       :bind (("C-s" . swiper)
@@ -122,3 +126,84 @@
       ([remap describe-variable] . counsel-describe-variable)
       ([remap describe-key] . helpful-key))
   #+END_SRC
+* Undo Tree
+  #+begin_src emacs-lisp
+    (use-package undo-tree
+      :ensure t
+      :init
+      (global-undo-tree-mode))
+  #+end_src
+* Org mode
+#+begin_src emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+#+end_src
+* Misc
+  #+begin_src emacs-lisp
+    (use-package beacon
+      :ensure t
+      :config
+      (beacon-mode 1)
+      ; this color looks good for the zenburn theme but not for the one
+      ; I'm using for the videos
+      ; (setq beacon-color "#666600")
+      )
+
+      ; deletes all the whitespace when you hit backspace or delete
+    (use-package hungry-delete
+      :ensure t
+      :config
+      (global-hungry-delete-mode))
+
+      ; expand the marked region in semantic increments (negative prefix to reduce region)
+    (use-package expand-region
+      :ensure t
+      :config
+      (global-set-key (kbd "C-=") 'er/expand-region))
+
+    (use-package multiple-cursors
+      :ensure t)
+
+    (setq save-interprogram-paste-before-kill t)
+    (global-auto-revert-mode 1)
+    (setq auto-revert-verbose nil)
+  #+end_src
+
+* iedit and narrow/widen dwim
+  #+begin_src emacs-lisp
+  ; mark and edit all copies of the marked region simultaniously. 
+    (use-package iedit
+      :ensure t)
+
+      ; if you're windened, narrow to the region, if you're narrowed, widen
+      ; bound to C-x n
+    (defun narrow-or-widen-dwim (p)
+      "If the buffer is narrowed, it widens. Otherwise, it narrows intelligently.
+      Intelligently means: region, org-src-block, org-subtree, or defun,
+      whichever applies first.
+      Narrowing to org-src-block actually calls `org-edit-src-code'.
+
+      With prefix P, don't widen, just narrow even if buffer is already
+      narrowed."
+      (interactive "P")
+      (declare (interactive-only))
+      (cond ((and (buffer-narrowed-p) (not p)) (widen))
+	    ((region-active-p)
+	     (narrow-to-region (region-beginning) (region-end)))
+	    ((derived-mode-p 'org-mode)
+	     ;; `org-edit-src-code' is not a real narrowing command.
+	     ;; Remove this first conditional if you don't want it.
+	     (cond ((ignore-errors (org-edit-src-code))
+		    (delete-other-windows))
+		   ((org-at-block-p)
+		    (org-narrow-to-block))
+		   (t (org-narrow-to-subtree))))
+	    (t (narrow-to-defun))))
+
+    ;; (define-key endless/toggle-map "n" #'narrow-or-widen-dwim)
+    ;; This line actually replaces Emacs' entire narrowing keymap, that's
+    ;; how much I like this command. Only copy it if that's what you want.
+    ;; (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
+  #+end_src
