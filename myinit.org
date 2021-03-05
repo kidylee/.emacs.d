@@ -1,3 +1,6 @@
+#+STARTUP: overview 
+#+PROPERTY: header-args :comments yes :results silent
+
 * UI
   
   #+BEGIN_SRC emacs-lisp
@@ -22,7 +25,7 @@
       (invert-face 'mode-line)
       (run-with-timer 0.1 nil #'invert-face 'mode-line))
 
-    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+    ;; (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
     (column-number-mode)
     (global-display-line-numbers-mode t)
@@ -34,8 +37,45 @@
 		    eshell-mode-hook))
       (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
- #+END_SRC
- 
+ #+END_SRC 
+* Theme
+  #+begin_src emacs-lisp
+    (use-package doom-themes
+      :config
+      ;; Global settings (defaults)
+      (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+	    doom-themes-enable-italic t) ; if nil, italics is universally disabled
+      (load-theme 'doom-one t)
+
+      ;; Enable flashing mode-line on errors
+      (doom-themes-visual-bell-config)
+
+      ;; Enable custom neotree theme (all-the-icons must be installed!)
+      (doom-themes-neotree-config)
+      ;; or for treemacs users
+      (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+      (doom-themes-treemacs-config)
+
+      ;; Corrects (and improves) org-mode's native fontification.
+      (doom-themes-org-config))
+
+
+    (use-package doom-modeline
+      :config
+      (doom-modeline-init))
+
+    (setq doom-modeline-minor-modes t)
+
+  #+end_src
+* Dashboard
+  #+begin_src emacs-lisp
+    (use-package dashboard
+      :config
+      (dashboard-setup-startup-hook))
+    (setq dashboard-items '((recents  . 5)
+			    (bookmarks . 5)
+			    (projects . 5)))
+  #+end_src
 * try
   #+BEGIN_SRC emacs-lisp
     (use-package try)
@@ -69,17 +109,6 @@
   
 * Swiper / Ivy / Counsel
   #+BEGIN_SRC emacs-lisp
-
-    (use-package counsel
-      :bind (("M-y" . counsel-yank-pop)
-	     ("C-M-j" . 'counsel-switch-buffer)
-	     :map minibuffer-local-map
-	     ("C-r" . 'counsel-minibuffer-history)
-	     :map ivy-minibuffer-map
-	     ("M-y" . ivy-next-line))
-      :config
-      (counsel-mode 1))
-
     (use-package ivy
       :diminish
       :bind (("C-s" . swiper)
@@ -94,16 +123,25 @@
 	     ("C-d" . ivy-switch-buffer-kill)
 	     :map ivy-reverse-i-search-map
 	     ("C-k" . ivy-previous-line)
-	     ("C-d" . ivy-reverse-i-search-kill))
-      :config
-      (ivy-mode 1))
+	     ("C-d" . ivy-reverse-i-search-kill)))
 
+    (ivy-mode 1)
+    (setq ivy-wrap t)
 
+    (use-package counsel
+      :after ivy
+      :bind (("C-M-j" . 'counsel-switch-buffer)
+	     :map minibuffer-local-map
+	     ("C-r" . 'counsel-minibuffer-history)
+	     :map ivy-minibuffer-map
+	     ("M-y" . ivy-next-line))
+      )
+    (counsel-mode 1)
 
     (use-package ivy-rich
       :after ivy
-      :init
-      (ivy-rich-mode 1))
+      )
+    (ivy-rich-mode 1)
   #+END_SRC
 
 * Text Navigation
@@ -206,4 +244,145 @@
     ;; This line actually replaces Emacs' entire narrowing keymap, that's
     ;; how much I like this command. Only copy it if that's what you want.
     ;; (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
+  #+end_src
+* projectile
+  #+begin_src emacs-lisp
+    (use-package projectile
+      :ensure t
+      :init
+      (projectile-mode +1)
+      :bind (:map projectile-mode-map
+		  ("C-c p" . projectile-command-map)))
+  #+end_src
+* Paredit
+  #+begin_src emacs-lisp
+    (use-package paredit
+      :ensure t
+      :config
+      (add-hook 'emacs-lisp-mode-hook #'paredit-mode)
+      ;; enable in the *scratch* buffer
+      (add-hook 'lisp-interaction-mode-hook #'paredit-mode)
+      (add-hook 'ielm-mode-hook #'paredit-mode)
+      (add-hook 'lisp-mode-hook #'paredit-mode)
+      (add-hook 'eval-expression-minibuffer-setup-hook #'paredit-mode))
+  #+end_src
+* Magit
+  #+begin_src emacs-lisp
+    (use-package magit
+      :commands magit-status
+      :custom
+      (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+  #+end_src
+* Rainbow-delimiters
+  #+begin_src emacs-lisp
+    (use-package rainbow-delimiters
+      :hook (prog-mode . rainbow-delimiters-mode))
+  #+end_src
+ Treemacs
+  #+begin_src emacs-lisp
+    (use-package treemacs
+      :ensure t
+      :defer t
+      :config
+      (progn
+	(setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
+	      treemacs-deferred-git-apply-delay      0.5
+	      treemacs-directory-name-transformer    #'identity
+	      treemacs-display-in-side-window        t
+	      treemacs-eldoc-display                 t
+	      treemacs-file-event-delay              5000
+	      treemacs-file-extension-regex          treemacs-last-period-regex-value
+	      treemacs-file-follow-delay             0.2
+	      treemacs-file-name-transformer         #'identity
+	      treemacs-follow-after-init             t
+	      treemacs-git-command-pipe              ""
+	      treemacs-goto-tag-strategy             'refetch-index
+	      treemacs-indentation                   2
+	      treemacs-indentation-string            " "
+	      treemacs-is-never-other-window         nil
+	      treemacs-max-git-entries               5000
+	      treemacs-missing-project-action        'ask
+	      treemacs-move-forward-on-expand        nil
+	      treemacs-no-png-images                 nil
+	      treemacs-no-delete-other-windows       t
+	      treemacs-project-follow-cleanup        nil
+	      treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+	      treemacs-position                      'left
+	      treemacs-read-string-input             'from-child-frame
+	      treemacs-recenter-distance             0.1
+	      treemacs-recenter-after-file-follow    nil
+	      treemacs-recenter-after-tag-follow     nil
+	      treemacs-recenter-after-project-jump   'always
+	      treemacs-recenter-after-project-expand 'on-distance
+	      treemacs-show-cursor                   nil
+	      treemacs-show-hidden-files             t
+	      treemacs-silent-filewatch              nil
+	      treemacs-silent-refresh                nil
+	      treemacs-sorting                       'alphabetic-asc
+	      treemacs-space-between-root-nodes      t
+	      treemacs-tag-follow-cleanup            t
+	      treemacs-tag-follow-delay              1.5
+	      treemacs-user-mode-line-format         nil
+	      treemacs-user-header-line-format       nil
+	      treemacs-width                         35
+	      treemacs-workspace-switch-cleanup      nil)
+
+	;; The default width and height of the icons is 22 pixels. If you are
+	;; using a Hi-DPI display, uncomment this to double the icon size.
+	;;(treemacs-resize-icons 44)
+
+	(treemacs-follow-mode t)
+	(treemacs-filewatch-mode t)
+	(treemacs-fringe-indicator-mode 'always)
+	(pcase (cons (not (null (executable-find "git")))
+		     (not (null treemacs-python-executable)))
+	  (`(t . t)
+	   (treemacs-git-mode 'deferred))
+	  (`(t . _)
+	   (treemacs-git-mode 'simple))))
+      :bind
+      (:map global-map
+	    ("M-0"       . treemacs-select-window)
+	    ("C-x t 1"   . treemacs-delete-other-windows)
+	    ("C-x t t"   . treemacs)
+	    ("C-x t B"   . treemacs-bookmark)
+	    ("C-x t C-t" . treemacs-find-file)
+	    ("C-x t M-t" . treemacs-find-tag)))
+
+
+    (use-package treemacs-projectile
+      :after (treemacs projectile)
+      :ensure t)
+
+    (use-package treemacs-magit
+      :after (treemacs magit)
+      :ensure t)
+  #+end_src
+* CIDER
+  #+begin_src emacs-lisp
+    (use-package cider)
+  #+end_src
+* Company
+  #+begin_src emacs-lisp
+    (use-package company
+      :bind (("C-c /" . company-complete))
+      :config
+      (global-company-mode))
+
+    (use-package company-flx
+      :config
+      (company-flx-mode +1))
+
+  #+end_src
+* Clj-refactor
+  #+begin_src emacs-lisp
+    (use-package clj-refactor
+      :ensure t
+      :init
+      (add-hook 'clojure-mode-hook 'clj-refactor-mode)
+      :config
+      ;; Configure the Clojure Refactoring prefix:
+      (cljr-add-keybindings-with-prefix "C-c '")
+      (setq cljr-warn-on-eval nil)
+      :diminish clj-refactor-mode)
   #+end_src
