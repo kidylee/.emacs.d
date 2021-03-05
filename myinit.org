@@ -259,12 +259,15 @@
     (use-package paredit
       :ensure t
       :config
-      (add-hook 'emacs-lisp-mode-hook #'paredit-mode)
+      (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
       ;; enable in the *scratch* buffer
-      (add-hook 'lisp-interaction-mode-hook #'paredit-mode)
-      (add-hook 'ielm-mode-hook #'paredit-mode)
-      (add-hook 'lisp-mode-hook #'paredit-mode)
-      (add-hook 'eval-expression-minibuffer-setup-hook #'paredit-mode))
+      (add-hook 'lisp-interaction-mode-hook 'paredit-mode)
+      (add-hook 'lisp-mode-hook 'paredit-mode)
+      (add-hook 'eval-expression-minibuffer-setup-hook 'paredit-mode)
+      (add-hook 'clojure-mode-hook 'paredit-mode)
+      (add-hook 'clojurescript-mode-hook 'paredit-mode)
+      (add-hook 'clojurec-mode-hook 'paredit-mode)
+      (add-hook 'cider-repl-mode-hook 'paredit-mode))
   #+end_src
 * Magit
   #+begin_src emacs-lisp
@@ -278,7 +281,7 @@
     (use-package rainbow-delimiters
       :hook (prog-mode . rainbow-delimiters-mode))
   #+end_src
- Treemacs
+* Treemacs
   #+begin_src emacs-lisp
     (use-package treemacs
       :ensure t
@@ -385,4 +388,21 @@
       (cljr-add-keybindings-with-prefix "C-c '")
       (setq cljr-warn-on-eval nil)
       :diminish clj-refactor-mode)
+  #+end_src
+* CLojure
+  #+begin_src emacs-lisp
+    (use-package clojure-mode
+      :ensure t
+      :init
+      (defconst clojure--prettify-symbols-alist
+	'(("fn"   . ?λ)
+	  ("__"   . ?⁈)))
+
+      :config
+      (add-hook 'clojure-mode-hook 'global-prettify-symbols-mode)
+      :bind (("C-c d f" . cider-code)
+	     ("C-c d g" . cider-grimoire)
+	     ("C-c d w" . cider-grimoire-web)
+	     ("C-c d c" . clojure-cheatsheet)
+	     ("C-c d d" . dash-at-point)))
   #+end_src
