@@ -406,3 +406,17 @@
 	     ("C-c d c" . clojure-cheatsheet)
 	     ("C-c d d" . dash-at-point)))
   #+end_src
+* EShell
+  
+  #+begin_src emacs-lisp
+    (use-package esh-autosuggest
+      :hook (eshell-mode . esh-autosuggest-mode))
+
+    (use-package fish-completion
+      :config
+      (global-fish-completion-mode))
+  #+end_src
+* Custom
+  #+begin_src emacs-lisp
+    (global-set-key (kbd "<S-return>") (kbd "C-e C-m"))
+  #+end_src
