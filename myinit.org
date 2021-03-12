@@ -420,6 +420,20 @@
       :config
       (global-fish-completion-mode))
   #+end_src
-* Custom
+* Programming
+** Auto save
+   #+begin_src emacs-lisp
+    (use-package real-auto-save
+      :config
+      (add-hook 'prog-mode-hook 'real-auto-save-mode)
+      (setq real-auto-save-interval 1))
+   #+end_src
+** yaml
+   #+begin_src emacs-lisp
+     (use-package yaml-mode
+       :config
+       (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
+   #+end_src
+
 
     
