@@ -419,6 +419,8 @@
     (use-package fish-completion
       :config
       (global-fish-completion-mode))
+
+    (use-package exec-path-from-shell)
   #+end_src
 * Programming
 ** Auto save
