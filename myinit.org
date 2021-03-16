@@ -291,6 +291,7 @@
       :ensure t
       :defer t
       :config
+      (define-key treemacs-mode-map [mouse-1] #'treemacs-single-click-expand-action)
       (progn
 	(setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
 	      treemacs-deferred-git-apply-delay      0.5
@@ -437,3 +438,7 @@
 
 
     
+** npm
+   #+begin_src emacs-lisp
+     (use-package npm-mode)
+   #+end_src
