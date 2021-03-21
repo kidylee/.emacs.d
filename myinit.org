@@ -420,7 +420,10 @@
       :config
       (global-fish-completion-mode))
 
-    (use-package exec-path-from-shell)
+    (use-package exec-path-from-shell
+      :config
+      (when (memq window-system '(mac ns x))
+	(exec-path-from-shell-initialize)))
   #+end_src
 * Programming
 ** Auto save
@@ -439,3 +442,4 @@
 
 
     
+   
