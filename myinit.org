@@ -424,6 +424,12 @@
       :config
       (when (memq window-system '(mac ns x))
 	(exec-path-from-shell-initialize)))
+
+    (use-package eshell-prompt-extras
+      :ensure t
+      :after (eshell esh-opt)
+      :custom
+      (eshell-prompt-function #'epe-theme-dakrone))
   #+end_src
 * Programming
 ** Auto save
