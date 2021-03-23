@@ -1,6 +1,13 @@
 #+STARTUP: overview 
 #+PROPERTY: header-args :comments yes :results silent
 
+* Configuration
+#+begin_src emacs-lisp
+  (use-package no-littering)
+
+  (setq auto-save-file-name-transforms
+	`((".*" ,(no-littering-expand-var-file-name "/tmp/auto-save/") t)))
+#+end_src
 * Custom Shortcute
   #+begin_src emacs-lisp
     (global-set-key (kbd "<S-return>") (kbd "C-e C-m"))
@@ -154,6 +161,10 @@
       )
     (ivy-rich-mode 1)
   #+END_SRC
+
+  #+begin_src emacs-lisp
+
+  #+end_src
 
 * Text Navigation
   #+BEGIN_SRC emacs-lisp
@@ -451,4 +462,9 @@
 ** npm
    #+begin_src emacs-lisp
      (use-package npm-mode)
-   #+end_src
+   #+end_
+* Commenting
+  #+begin_src emacs-lisp
+    (use-package evil-nerd-commenter
+      :bind ("M-/" . evilnc-comment-or-uncomment-lines))
+  #+end_src
