@@ -4,6 +4,10 @@
 * Custom Shortcute
   #+begin_src emacs-lisp
     (global-set-key (kbd "<S-return>") (kbd "C-e C-m"))
+
+    (use-package goto-last-change
+      :config
+      (global-set-key (kbd "C-`") 'goto-last-change))
   #+end_src
 * UI
   
@@ -95,16 +99,19 @@
   #+END_SRC
 
 * window management
+
   #+BEGIN_SRC emacs-lisp
-     (use-package ace-window
-       :ensure t
-       :init
-       (progn
-	 (global-set-key [remap other-window] 'ace-window)
-	 (custom-set-faces
-	  '(aw-leading-char-face
-	    ((t (:inherit ace-jump-face-foreground :height 3.0))))) 
-	 ))
+    (winner-mode 1)
+
+    (use-package ace-window
+      :ensure t
+      :init
+      (progn
+	(global-set-key [remap other-window] 'ace-window)
+	(custom-set-faces
+	 '(aw-leading-char-face
+	   ((t (:inherit ace-jump-face-foreground :height 3.0))))) 
+	))
   #+END_SRC
 * Buffer
   #+BEGIN_SRC emacs-lisp
@@ -260,6 +267,9 @@
   #+end_src
 * Paredit
   #+begin_src emacs-lisp
+    (use-package highlight-parentheses
+      :config
+      (add-hook 'prog-mode-hook 'highlight-parentheses-mode))
     (use-package paredit
       :ensure t
       :config
