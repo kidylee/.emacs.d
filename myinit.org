@@ -1,9 +1,25 @@
 #+STARTUP: overview 
 #+PROPERTY: header-args :comments yes :results silent
 
+* Configuration
+  #+begin_src emacs-lisp
+    (use-package no-littering)
+
+    (setq auto-save-file-name-transforms
+	  `((".*" ,(no-littering-expand-var-file-name "tmp/") t)))
+
+    #+end_src    
+    
+    #+begin_src emacs-lisp
+      (delete-selection-mode 1)
+    #+end_src
 * Custom Shortcute
   #+begin_src emacs-lisp
     (global-set-key (kbd "<S-return>") (kbd "C-e C-m"))
+
+    (use-package goto-last-change
+      :config
+      (global-set-key (kbd "C-`") 'goto-last-change))
   #+end_src
 * UI
   
@@ -95,16 +111,19 @@
   #+END_SRC
 
 * window management
+
   #+BEGIN_SRC emacs-lisp
-     (use-package ace-window
-       :ensure t
-       :init
-       (progn
-	 (global-set-key [remap other-window] 'ace-window)
-	 (custom-set-faces
-	  '(aw-leading-char-face
-	    ((t (:inherit ace-jump-face-foreground :height 3.0))))) 
-	 ))
+    (winner-mode 1)
+
+    (use-package ace-window
+      :ensure t
+      :init
+      (progn
+	(global-set-key [remap other-window] 'ace-window)
+	(custom-set-faces
+	 '(aw-leading-char-face
+	   ((t (:inherit ace-jump-face-foreground :height 3.0))))) 
+	))
   #+END_SRC
 * Buffer
   #+BEGIN_SRC emacs-lisp
@@ -147,6 +166,10 @@
       )
     (ivy-rich-mode 1)
   #+END_SRC
+
+  #+begin_src emacs-lisp
+
+  #+end_src
 
 * Text Navigation
   #+BEGIN_SRC emacs-lisp
@@ -260,6 +283,9 @@
   #+end_src
 * Paredit
   #+begin_src emacs-lisp
+    (use-package highlight-parentheses
+      :config
+      (add-hook 'prog-mode-hook 'highlight-parentheses-mode))
     (use-package paredit
       :ensure t
       :config
@@ -291,6 +317,7 @@
       :ensure t
       :defer t
       :config
+      (define-key treemacs-mode-map [mouse-1] #'treemacs-single-click-expand-action)
       (progn
 	(setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
 	      treemacs-deferred-git-apply-delay      0.5
@@ -445,7 +472,17 @@
        :config
        (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
    #+end_src
-
-
-    
    
+** npm
+   #+begin_src emacs-lisp
+     (use-package npm-mode
+       :config
+	(add-hook 'prog-mode-hook (lambda () (npm-mode 1))))
+   #+end_src
+   
+* Commenting
+  #+begin_src emacs-lisp
+    (use-package evil-nerd-commenter
+      :config
+      (global-set-key (kbd "M-/") 'evilnc-comment-or-uncomment-lines))
+  #+end_src
