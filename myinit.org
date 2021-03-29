@@ -9,13 +9,16 @@
 	  `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
   #+end_src
 
-    #+begin_src emacs-lisp
-      (delete-selection-mode 1)
-    #+end_src
+  #+begin_src emacs-lisp
+    (delete-selection-mode 1)
+    (add-to-list 'default-frame-alist '(fullscreen . maximized))
+  #+end_src
 
 * Custom Shortcute
   #+begin_src emacs-lisp
     (global-set-key (kbd "<S-return>") (kbd "C-e C-m"))
+    (global-set-key [mouse-8] 'previous-buffer)
+    (global-set-key [mouse-9] 'next-buffer)
 
     (use-package goto-last-change
       :config
