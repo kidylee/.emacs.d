@@ -11,7 +11,20 @@
 
   #+begin_src emacs-lisp
     (delete-selection-mode 1)
+    (add-hook 'prog-mode-hook 'delete-selection-mode)
     (add-to-list 'default-frame-alist '(fullscreen . maximized))
+  #+end_src
+
+* Automatic Package Updates
+  #+begin_src emacs-lisp
+    (use-package auto-package-update
+      :custom
+      (auto-package-update-interval 7)
+      (auto-package-update-prompt-before-update t)
+      (auto-package-update-hide-results t)
+      :config
+      (auto-package-update-maybe)
+      (auto-package-update-at-time "09:00"))
   #+end_src
 
 * Custom Shortcute
@@ -87,7 +100,8 @@
       :config
       (doom-modeline-init))
 
-    (setq doom-modeline-minor-modes t)
+    (setq doom-modeline-minor-modes nil)
+
 
   #+end_src
 * Dashboard
@@ -171,7 +185,14 @@
   #+END_SRC
 
   #+begin_src emacs-lisp
-
+    (use-package ivy-prescient
+      :after counsel
+      :custom
+      (ivy-prescient-enable-filtering nil)
+      :config
+      ;; Uncomment the following line to have sorting remembered across sessions!
+      ;(prescient-persist-mode 1)
+      (ivy-prescient-mode 1))
   #+end_src
 
 * Text Navigation
@@ -402,13 +423,23 @@
 * Company
   #+begin_src emacs-lisp
     (use-package company
-      :bind (("C-c /" . company-complete))
-      :config
-      (global-company-mode))
+      :after lsp-mode
+      :hook (lsp-mode . company-mode)
+      :bind (:map company-active-map
+	     ("<tab>" . company-complete-selection))
+	    (:map lsp-mode-map
+	     ("<tab>" . company-indent-or-complete-common))
+      :custom
+      (company-minimum-prefix-length 1)
+      (company-idle-delay 0.0))
 
-    (use-package company-flx
-      :config
-      (company-flx-mode +1))
+    ;; (use-package company-flx
+    ;;   :config
+    ;;   (company-flx-mode +1))
+
+
+    (use-package company-box
+      :hook (company-mode . company-box-mode))
 
   #+end_src
 * Clj-refactor
@@ -490,6 +521,58 @@
 	(add-hook 'prog-mode-hook (lambda () (npm-mode 1))))
    #+end_src
    
+** LSP
+   #+begin_src emacs-lisp
+	  (use-package lsp-mode
+	    :commands lsp
+	    :init
+	    (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+	    :config
+	    (lsp-enable-which-key-integration t)
+	    (setq lsp-enable-on-type-formatting t)
+	    (setq lsp-enable-indentation nil))
+
+	  (add-hook 'lsp-mode-hook  'lsp-headerline-breadcrumb-mode)
+	  (add-hook 'clojure-mode-hook   'lsp)
+	  (add-hook 'clojurescript-mode-hook  'lsp)
+	  (add-hook 'clojurec-mode-hook  'lsp)
+
+
+
+	  (use-package lsp-ui
+	    :hook (lsp-mode . lsp-ui-mode)
+	    :custom
+	    (lsp-ui-doc-position 'bottom))
+
+	  (use-package lsp-treemacs
+	    :after lsp)
+
+
+	  (use-package lsp-ivy
+	    :after lsp)
+
+	  (setq gc-cons-threshold (* 100 1024 1024)
+		read-process-output-max (* 1024 1024)
+		treemacs-space-between-root-nodes nil
+		company-minimum-prefix-length 1
+		lsp-lens-enable t
+		lsp-signature-auto-activate nil
+		;; lsp-enable-indentation nil ; uncomment to use cider indentation instead of lsp
+		;; lsp-enable-completion-at-point nil ; uncomment to use cider completion instead of lsp
+		lsp-lens-enable t
+		)
+   #+end_src
+
+** Debugging
+   #+begin_src emacs-lisp
+     (add-hook 'dap-stopped-hook
+	       (lambda (arg) (call-interactively #'dap-hydra)))
+   #+end_src
+** Flycheck
+#+begin_src emacs-lisp
+  (use-package "flycheck")
+#+end_src
+
 * Commenting
   #+begin_src emacs-lisp
     (use-package evil-nerd-commenter
