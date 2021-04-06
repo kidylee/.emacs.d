@@ -573,6 +573,10 @@
   (use-package "flycheck")
 #+end_src
 
+** Logview
+   #+begin_src emacs-lisp
+     (use-package logview)
+   #+end_src
 * Commenting
   #+begin_src emacs-lisp
     (use-package evil-nerd-commenter
