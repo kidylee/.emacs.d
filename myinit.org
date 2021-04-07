@@ -577,6 +577,10 @@
    #+begin_src emacs-lisp
      (use-package logview)
    #+end_src
+** Ripgrep
+   #+begin_src emacs-lisp
+     (use-package rg)
+   #+end_src
 * Commenting
   #+begin_src emacs-lisp
     (use-package evil-nerd-commenter
