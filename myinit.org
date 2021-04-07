@@ -579,8 +579,7 @@
    #+end_src
 ** Ripgrep
    #+begin_src emacs-lisp
-     (use-package rg)
-     (use-package projectile-ripgrep)
+     (use-package ripgrep)
    #+end_src
 * Commenting
   #+begin_src emacs-lisp
