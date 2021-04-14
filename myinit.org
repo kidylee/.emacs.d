@@ -27,6 +27,9 @@
       (auto-package-update-at-time "09:00"))
   #+end_src
 
+  (setq auto-save-file-name-transforms
+	`((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+#+end_src
 * Custom Shortcute
   #+begin_src emacs-lisp
     (global-set-key (kbd "<S-return>") (kbd "C-e C-m"))
@@ -611,7 +614,8 @@
 * Commenting
   #+begin_src emacs-lisp
     (use-package evil-nerd-commenter
+      :bind ("M-/" . evilnc-comment-or-uncomment-lines)
       :config
-      (global-set-key (kbd "M-/") 'evilnc-comment-or-uncomment-lines))
+      (global-set-key (kbd "M-/" 'evilnc-comment-or-uncomment-lines)))
   #+end_src
 
